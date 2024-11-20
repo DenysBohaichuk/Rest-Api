@@ -32,7 +32,7 @@ const emit = defineEmits(['submit-form', 'file-change']);
                 label="Ім'я"
                 type="text"
                 v-model="form.name"
-                :required="true"
+                :required="false"
                 :error="formErrors.name"
             />
             <EmailField
@@ -40,7 +40,7 @@ const emit = defineEmits(['submit-form', 'file-change']);
                 label="Email"
                 type="email"
                 v-model="form.email"
-                :required="true"
+                :required="false"
                 :error="formErrors.email"
             />
             <div>
@@ -50,7 +50,6 @@ const emit = defineEmits(['submit-form', 'file-change']);
                     type="file"
                     id="profile_image"
                     accept="image/*"
-                    required
                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
             </div>

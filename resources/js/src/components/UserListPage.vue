@@ -17,7 +17,8 @@ const form = ref({
 });
 const formErrors = ref([]);
 
-const schema = yup.object().shape({
+// Для валідації форми
+/*const schema = yup.object().shape({
     name: yup.string().required('Ім\'я є обов\'язковим.'),
     email: yup.string().email('Некоректний формат email.').required('Email є обов\'язковим.'),
     profile_image: yup
@@ -29,7 +30,7 @@ const schema = yup.object().shape({
         .test('fileType', 'Непідтримуваний формат файлу (лише JPG/PNG/WEBP).', (value) => {
             return value && ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
         }),
-});
+});*/
 
 const resetForm = () => {
     form.value.name = '';
@@ -63,7 +64,7 @@ const addUser = async () => {
     try {
         console.log("Додавання користувача...", form.value);
 
-        await schema.validate(form.value, { abortEarly: false });
+       // await schema.validate(form.value, { abortEarly: false });
 
         const formData = new FormData();
         formData.append('name', form.value.name);
@@ -88,11 +89,11 @@ const addUser = async () => {
     } catch (validationError) {
         console.error("Помилка валідації:", validationError);
 
-        if(validationError?.message){
-            formErrors.value = [validationError.message];
-        }
-        else if (validationError.response?.data?.error?.message) {
+        if (validationError.response?.data?.error?.message) {
             formErrors.value = [validationError.response.data.error.message];
+        }
+        else if(validationError?.message){
+            formErrors.value = [validationError.message];
         } else if (validationError.response?.data?.message) {
             formErrors.value = [validationError.response.data.message];
         } else {
