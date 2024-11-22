@@ -47,13 +47,37 @@ class UserController extends ApiController
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="John Doe"),
-     *                     @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                     @OA\Property(property="profile_image", type="string", example="images/users/12345.jpg")
-     *                 )
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="data", type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="uuid", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
+     *                         @OA\Property(property="name", type="string", example="John Doe"),
+     *                         @OA\Property(property="email", type="string", example="john.doe@example.com"),
+     *                         @OA\Property(property="phone", type="string", example="+380123456789"),
+     *                         @OA\Property(property="profile_image", type="string", example="avatars/example.jpg")
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="first_page_url", type="string", example="http://example.com/api/users?page=1"),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=5),
+     *                 @OA\Property(property="last_page_url", type="string", example="http://example.com/api/users?page=5"),
+     *                 @OA\Property(
+     *                     property="links",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="url", type="string", example="http://example.com/api/users?page=2"),
+     *                         @OA\Property(property="label", type="string", example="&laquo; Previous"),
+     *                         @OA\Property(property="active", type="boolean", example=false)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="next_page_url", type="string", example="http://example.com/api/users?page=2"),
+     *                 @OA\Property(property="path", type="string", example="http://example.com/api/users"),
+     *                 @OA\Property(property="per_page", type="integer", example=6),
+     *                 @OA\Property(property="prev_page_url", type="string", example=null),
+     *                 @OA\Property(property="to", type="integer", example=6),
+     *                 @OA\Property(property="total", type="integer", example=30)
      *             )
      *         )
      *     )
@@ -121,10 +145,12 @@ class UserController extends ApiController
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name", "email"},
+     *             required={"uuid", "name", "email", "phone"},
+     *             @OA\Property(property="uuid", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
      *             @OA\Property(property="name", type="string", example="John Doe"),
      *             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *             @OA\Property(property="profile_image", type="string", format="binary", example="base64_encoded_image")
+     *             @OA\Property(property="phone", type="string", example="0123456789"),
+     *             @OA\Property(property="profile_image", type="string", format="binary", description="Зображення профілю у форматі Base64")
      *         )
      *     ),
      *     @OA\Response(
@@ -133,10 +159,17 @@ class UserController extends ApiController
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="profile_image", type="string", example="images/users/12345.jpg")
+     *                 @OA\Property(property="token", type="string", example="3|3EwdR9p5rMjrGAM5zKpgoXDDgqMqLCyqwCDrYYxgab481ddf"),
+     *                 @OA\Property(property="user", type="object",
+     *                     @OA\Property(property="id", type="integer", example=48),
+     *                     @OA\Property(property="uuid", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
+     *                     @OA\Property(property="name", type="string", example="John Doe"),
+     *                     @OA\Property(property="email", type="string", example="john.doe@example.com"),
+     *                     @OA\Property(property="phone", type="string", example="0123456789"),
+     *                     @OA\Property(property="profile_image", type="string", example="avatars/example.jpg"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-11-22T00:52:47.000000Z"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-11-22T00:52:47.000000Z")
+     *                 )
      *             )
      *         )
      *     ),

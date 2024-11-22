@@ -47,28 +47,105 @@
                                             "example": true
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "John Doe"
-                                                    },
-                                                    "email": {
-                                                        "type": "string",
-                                                        "example": "john.doe@example.com"
-                                                    },
-                                                    "profile_image": {
-                                                        "type": "string",
-                                                        "example": "images/users/12345.jpg"
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "example": "550e8400-e29b-41d4-a716-446655440000"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "john.doe@example.com"
+                                                            },
+                                                            "phone": {
+                                                                "type": "string",
+                                                                "example": "+380123456789"
+                                                            },
+                                                            "profile_image": {
+                                                                "type": "string",
+                                                                "example": "avatars/example.jpg"
+                                                            }
+                                                        },
+                                                        "type": "object"
                                                     }
                                                 },
-                                                "type": "object"
-                                            }
+                                                "first_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/users?page=1"
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/users?page=5"
+                                                },
+                                                "links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "http://example.com/api/users?page=2"
+                                                            },
+                                                            "label": {
+                                                                "type": "string",
+                                                                "example": "&laquo; Previous"
+                                                            },
+                                                            "active": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/users?page=2"
+                                                },
+                                                "path": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/api/users"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "example": null
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -91,10 +168,16 @@
                         "application/json": {
                             "schema": {
                                 "required": [
+                                    "uuid",
                                     "name",
-                                    "email"
+                                    "email",
+                                    "phone"
                                 ],
                                 "properties": {
+                                    "uuid": {
+                                        "type": "string",
+                                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                                    },
                                     "name": {
                                         "type": "string",
                                         "example": "John Doe"
@@ -103,10 +186,14 @@
                                         "type": "string",
                                         "example": "john.doe@example.com"
                                     },
-                                    "profile_image": {
+                                    "phone": {
                                         "type": "string",
-                                        "format": "binary",
-                                        "example": "base64_encoded_image"
+                                        "example": "0123456789"
+                                    },
+                                    "profile_image": {
+                                        "description": "Зображення профілю у форматі Base64",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -127,21 +214,48 @@
                                         },
                                         "data": {
                                             "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "name": {
+                                                "token": {
                                                     "type": "string",
-                                                    "example": "John Doe"
+                                                    "example": "3|3EwdR9p5rMjrGAM5zKpgoXDDgqMqLCyqwCDrYYxgab481ddf"
                                                 },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "john.doe@example.com"
-                                                },
-                                                "profile_image": {
-                                                    "type": "string",
-                                                    "example": "images/users/12345.jpg"
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 48
+                                                        },
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "john.doe@example.com"
+                                                        },
+                                                        "phone": {
+                                                            "type": "string",
+                                                            "example": "0123456789"
+                                                        },
+                                                        "profile_image": {
+                                                            "type": "string",
+                                                            "example": "avatars/example.jpg"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-11-22T00:52:47.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2024-11-22T00:52:47.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"

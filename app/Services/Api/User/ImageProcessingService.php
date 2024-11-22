@@ -31,7 +31,7 @@ class ImageProcessingService
         $optimizedImage = $this->optimizeImageWithTinyPng($resizedImage);
 
         // Зберігаємо зображення у сховище
-        $path = $this->saveImageToStorage($optimizedImage);
+        $path = $this->saveImageToStorage($optimizedImage, $storagePath);
 
         return $path;
     }
@@ -64,7 +64,7 @@ class ImageProcessingService
     /**
      * Зберігає зображення у сховище та повертає шлях до файлу.
      */
-    private function saveImageToStorage(string $optimizedImage): string
+    private function saveImageToStorage(string $optimizedImage, string $storagePath): string
     {
         $projectTempDir = storage_path('app/temp');
 
@@ -88,7 +88,7 @@ class ImageProcessingService
             true // Це тестовий файл
         );
 
-        $path = $this->imageHelper->uploadImage($optimizedFile, 'avatars');
+        $path = $this->imageHelper->uploadImage($optimizedFile, $storagePath);
 
         // Видаляємо тимчасовий файл після збереження
         unlink($tempFilePath);

@@ -28,6 +28,14 @@ const emit = defineEmits(['submit-form', 'file-change']);
             </div>
 
             <InputField
+                id="uuid"
+                label="ID"
+                type="text"
+                v-model="form.uuid"
+                :required="false"
+                :error="formErrors.uuid"
+            />
+            <InputField
                 id="name"
                 label="Ім'я"
                 type="text"
@@ -42,6 +50,14 @@ const emit = defineEmits(['submit-form', 'file-change']);
                 v-model="form.email"
                 :required="false"
                 :error="formErrors.email"
+            />
+            <InputField
+                id="phone"
+                label="Телефон"
+                type="text"
+                v-model="form.phone"
+                :required="false"
+                :error="formErrors.phone"
             />
             <div>
                 <label for="profile_image" class="block text-sm font-medium text-gray-700">Аватар</label>

@@ -17,7 +17,10 @@ class Service
 
     public function getAllUsers()
     {
-        return User::paginate(6);
+        $users = User::paginate(6);
+        return [
+          'users' => $users,
+        ];
     }
 
 
@@ -30,13 +33,21 @@ class Service
     public function createUser($request)
     {
         $avatar = $request->file('profile_image');
-
         $avatarPath = $this->imageProcessingService->processAvatar($avatar, 'avatars');
 
-        return User::create([
+        $user = User::create([
+            'uuid' => $request->uuid,
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'profile_image' => $avatarPath,
         ]);
+
+        $token = $user->createToken($user->uuid)->plainTextToken;
+
+        return [
+            'user' => $user,
+            'token' => $token,
+        ];
     }
 }

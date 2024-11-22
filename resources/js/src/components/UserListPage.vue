@@ -11,8 +11,10 @@ const users = ref([]);
 const page = ref(1);
 const hasMore = ref(true);
 const form = ref({
+    uuid: '',
     name: '',
     email: '',
+    phone: '',
     profile_image: null,
 });
 const formErrors = ref([]);
@@ -42,10 +44,13 @@ const resetForm = () => {
 const loadUsers = async () => {
     try {
         const response = await fetchUsers(page.value);
+        const data = response.data.users
+
         console.log(response)
+
         if (response.status) {
-            users.value.push(...response.data.data);
-            hasMore.value = response.data.current_page < response.data.last_page;
+            users.value.push(...data.data);
+            hasMore.value = data.current_page < data.last_page;
         } else {
             handleApiError(response.error);
         }
@@ -67,8 +72,10 @@ const addUser = async () => {
        // await schema.validate(form.value, { abortEarly: false });
 
         const formData = new FormData();
+        formData.append('uuid', form.value.uuid);
         formData.append('name', form.value.name);
         formData.append('email', form.value.email);
+        formData.append('phone', form.value.phone);
         formData.append('profile_image', form.value.profile_image);
 
         for (let [key, value] of formData.entries()) {
@@ -79,8 +86,10 @@ const addUser = async () => {
 
         console.log("Результат API:", response);
 
+        const data = response.data;
+
         if (response.status) {
-            users.value.unshift(response.data);
+            users.value.unshift(data.user);
             resetForm();
             alert('Користувач успішно доданий!');
         } else {
@@ -90,7 +99,7 @@ const addUser = async () => {
         console.error("Помилка валідації:", validationError);
 
         if (validationError.response?.data?.error?.message) {
-            formErrors.value = [validationError.response.data.error.message];
+            formErrors.value = validationError.response.data.error.message;
         }
         else if(validationError?.message){
             formErrors.value = [validationError.message];
