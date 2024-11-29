@@ -15,6 +15,122 @@
         }
     ],
     "paths": {
+        "/token": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Отримати новий токен",
+                "description": "Метод повертає токен, який необхідний для реєстрації нового користувача. Токен дійсний 40 хвилин і може бути використаний лише для одного запиту. Для наступної реєстрації потрібно отримати новий токен.",
+                "operationId": "getToken",
+                "responses": {
+                    "200": {
+                        "description": "JSON об'єкт, який містить токен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJpdiI6Im9mV1NTMlFZQTlJeWlLQ3liVks1MGc9PSIsInZhbHVlIjoiRTJBbUR4dHp1dWJ3ekQ4bG85WVZya3ZpRGlMQ0g5ZHk4M05UNUY4Rmd3eFM3czc2UDRBR0E4SDR5WXlVTG5DUDdSRTJTMU1KQ2lUQmVZYXZZOHJJUVE9PSIsIm1hYyI6ImE5YmNiODljZjMzMTdmMDc4NjEwN2RjZTVkNzBmMWI0ZDQyN2YzODI5YjQxMzE4MWY0MmY0ZTQ1OGY4NTkyNWQifQ=="
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/positions": {
+            "get": {
+                "tags": [
+                    "Positions"
+                ],
+                "summary": "Отримати список доступних посад користувачів",
+                "description": "Метод повертає список всіх доступних посад користувачів.",
+                "operationId": "getPositions",
+                "responses": {
+                    "200": {
+                        "description": "Список доступних посад користувачів",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "positions": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Lawyer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Посади не знайдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Positions not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Невірний запит",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Positions not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -42,110 +158,119 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "data": {
+                                        "page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "total_pages": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "total_users": {
+                                            "type": "integer",
+                                            "example": 55
+                                        },
+                                        "count": {
+                                            "type": "integer",
+                                            "example": 6
+                                        },
+                                        "links": {
                                             "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "uuid": {
-                                                                "type": "string",
-                                                                "example": "550e8400-e29b-41d4-a716-446655440000"
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "John Doe"
-                                                            },
-                                                            "email": {
-                                                                "type": "string",
-                                                                "example": "john.doe@example.com"
-                                                            },
-                                                            "phone": {
-                                                                "type": "string",
-                                                                "example": "+380123456789"
-                                                            },
-                                                            "profile_image": {
-                                                                "type": "string",
-                                                                "example": "avatars/example.jpg"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "first_page_url": {
+                                                "next_url": {
                                                     "type": "string",
-                                                    "example": "http://example.com/api/users?page=1"
+                                                    "example": "http://rest-api.test/api/v1/users?page=2"
                                                 },
-                                                "from": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "last_page_url": {
+                                                "prev_url": {
                                                     "type": "string",
-                                                    "example": "http://example.com/api/users?page=5"
-                                                },
-                                                "links": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "url": {
-                                                                "type": "string",
-                                                                "example": "http://example.com/api/users?page=2"
-                                                            },
-                                                            "label": {
-                                                                "type": "string",
-                                                                "example": "&laquo; Previous"
-                                                            },
-                                                            "active": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "next_page_url": {
-                                                    "type": "string",
-                                                    "example": "http://example.com/api/users?page=2"
-                                                },
-                                                "path": {
-                                                    "type": "string",
-                                                    "example": "http://example.com/api/users"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 6
-                                                },
-                                                "prev_page_url": {
-                                                    "type": "string",
-                                                    "example": null
-                                                },
-                                                "to": {
-                                                    "type": "integer",
-                                                    "example": 6
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 30
+                                                    "example": "null"
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 75
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "User Name"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "post@gmail.com"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "+380734888999"
+                                                    },
+                                                    "position": {
+                                                        "type": "string",
+                                                        "example": "Content manager",
+                                                        "nullable": true
+                                                    },
+                                                    "position_id": {
+                                                        "type": "string",
+                                                        "example": "2"
+                                                    },
+                                                    "registration_timestamp": {
+                                                        "type": "integer",
+                                                        "example": 1732819981
+                                                    },
+                                                    "photo": {
+                                                        "type": "string",
+                                                        "example": "http://rest-api.test/storage/avatars/1732819981_6748bc0d1435e.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "example": "http://rest-api.test/api/v1/users?page=1"
+                                        },
+                                        "from": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "last_page_url": {
+                                            "type": "string",
+                                            "example": "http://rest-api.test/api/v1/users?page=10"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "example": "http://rest-api.test/api/v1/users?page=2"
+                                        },
+                                        "path": {
+                                            "type": "string",
+                                            "example": "http://rest-api.test/api/v1/users"
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 6
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "to": {
+                                            "type": "integer",
+                                            "example": 6
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 55
                                         }
                                     },
                                     "type": "object"
@@ -165,33 +290,38 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "uuid",
                                     "name",
                                     "email",
-                                    "phone"
+                                    "phone",
+                                    "position_id",
+                                    "photo"
                                 ],
                                 "properties": {
-                                    "uuid": {
-                                        "type": "string",
-                                        "example": "550e8400-e29b-41d4-a716-446655440000"
-                                    },
                                     "name": {
+                                        "description": "Ім'я користувача, повинно бути від 2 до 60 символів",
                                         "type": "string",
                                         "example": "John Doe"
                                     },
                                     "email": {
+                                        "description": "Електронна пошта користувача, має бути валідною згідно з RFC2822",
                                         "type": "string",
                                         "example": "john.doe@example.com"
                                     },
                                     "phone": {
+                                        "description": "Номер телефону користувача, має починатись з коду України +380",
                                         "type": "string",
-                                        "example": "0123456789"
+                                        "example": "+380123456789"
                                     },
-                                    "profile_image": {
-                                        "description": "Зображення профілю у форматі Base64",
+                                    "position_id": {
+                                        "description": "Ідентифікатор посади користувача. Список можна отримати через GET api/v1/positions",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "photo": {
+                                        "description": "Фото користувача у форматі JPEG/JPG, мінімальний розмір 70x70px, розмір не більше 5MB",
                                         "type": "string",
                                         "format": "binary"
                                     }
@@ -202,63 +332,43 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Користувач успішно створений",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "data": {
-                                            "properties": {
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "3|3EwdR9p5rMjrGAM5zKpgoXDDgqMqLCyqwCDrYYxgab481ddf"
-                                                },
-                                                "user": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 48
-                                                        },
-                                                        "uuid": {
-                                                            "type": "string",
-                                                            "example": "550e8400-e29b-41d4-a716-446655440000"
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "John Doe"
-                                                        },
-                                                        "email": {
-                                                            "type": "string",
-                                                            "example": "john.doe@example.com"
-                                                        },
-                                                        "phone": {
-                                                            "type": "string",
-                                                            "example": "0123456789"
-                                                        },
-                                                        "profile_image": {
-                                                            "type": "string",
-                                                            "example": "avatars/example.jpg"
-                                                        },
-                                                        "created_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2024-11-22T00:52:47.000000Z"
-                                                        },
-                                                        "updated_at": {
-                                                            "type": "string",
-                                                            "format": "date-time",
-                                                            "example": "2024-11-22T00:52:47.000000Z"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
+                                        "user_id": {
+                                            "type": "integer",
+                                            "example": 23
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "New user successfully registered"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Токен закінчився",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The token expired."
                                         }
                                     },
                                     "type": "object"
@@ -272,22 +382,58 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": false
                                         },
-                                        "error": {
-                                            "properties": {
-                                                "code": {
-                                                    "type": "integer",
-                                                    "example": 422
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "fails": {
+                                            "type": "object",
+                                            "additionalProperties": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The name must be at least 2 characters."
+                                                    },
+                                                    "property": "name"
                                                 },
-                                                "message": {
-                                                    "type": "string",
-                                                    "example": "Validation error"
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email must be a valid email address."
+                                                    },
+                                                    "property": "email"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The phone field is required."
+                                                    },
+                                                    "property": "phone"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The position id must be an integer."
+                                                    },
+                                                    "property": "position_id"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The photo may not be greater than 5 Mbytes."
+                                                    },
+                                                    "property": "photo"
                                                 }
-                                            },
-                                            "type": "object"
+                                            ]
                                         }
                                     },
                                     "type": "object"
@@ -325,11 +471,11 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "data": {
+                                        "user": {
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
@@ -343,9 +489,55 @@
                                                     "type": "string",
                                                     "example": "john.doe@example.com"
                                                 },
-                                                "profile_image": {
+                                                "phone": {
                                                     "type": "string",
-                                                    "example": "images/users/12345.jpg"
+                                                    "example": "+380957398462"
+                                                },
+                                                "position": {
+                                                    "type": "string",
+                                                    "example": "Security"
+                                                },
+                                                "position_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "photo": {
+                                                    "type": "string",
+                                                    "example": "http://rest-api.test/storage/avatars/1732818938_6748b7faaff78.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Невірний запит або не коректні дані",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "fails": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "The id must be a valid integer."
+                                                    ]
                                                 }
                                             },
                                             "type": "object"
@@ -362,22 +554,13 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
+                                        "success": {
                                             "type": "boolean",
                                             "example": false
                                         },
-                                        "error": {
-                                            "properties": {
-                                                "code": {
-                                                    "type": "integer",
-                                                    "example": 404
-                                                },
-                                                "message": {
-                                                    "type": "string",
-                                                    "example": "User not found"
-                                                }
-                                            },
-                                            "type": "object"
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
                                         }
                                     },
                                     "type": "object"
@@ -390,6 +573,14 @@
         }
     },
     "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Positions",
+            "description": "Positions"
+        },
         {
             "name": "Users",
             "description": "Users"

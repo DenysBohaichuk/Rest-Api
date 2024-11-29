@@ -18,4 +18,9 @@ class User extends Authenticatable
      */
     protected $guarded = false;
 
+
+    public function positions()
+    {
+        return $this->belongsToMany(Position::class, 'user_position');
+    }
 }

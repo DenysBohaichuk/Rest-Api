@@ -23,7 +23,7 @@ const emit = defineEmits(['load-more']);
             class="p-5 mb-4 bg-white rounded-lg shadow-md flex items-center gap-4 sm:gap-6"
         >
             <img
-                :src="`/storage/${user.profile_image}`"
+                :src="`${user.photo}`"
                 alt="Avatar"
                 class="w-16 h-16 rounded-full border border-gray-300"
             />
@@ -31,7 +31,7 @@ const emit = defineEmits(['load-more']);
                 <p class="text-lg font-bold text-gray-900">{{ user.name }}</p>
                 <p class="text-sm text-gray-600">{{ user.email }}</p>
                 <p class="text-sm text-gray-400">{{ user.phone }}</p>
-                <p class="text-xs text-gray-300">UUID: {{ user.uuid }}</p>
+                <p class="text-sm text-gray-400">{{ user.position }}</p>
             </div>
         </div>
 

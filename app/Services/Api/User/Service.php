@@ -1,8 +1,9 @@
 <?php
 namespace App\Services\Api\User;
 
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UsersResource;
 use App\Models\Base\User;
-use Illuminate\Support\Facades\Storage;
 
 class Service
 {
@@ -17,37 +18,59 @@ class Service
 
     public function getAllUsers()
     {
-        $users = User::paginate(6);
+        $users = User::
+            with('positions')
+            ->orderBy('created_at', 'desc')
+            ->paginate(6);
+
         return [
-          'users' => $users,
-        ];
+            'page' => $users->currentPage(),
+            'total_pages' => $users->lastPage(),
+            'total_users' => $users->total(),
+            'count' => $users->count(),
+            'links' => [
+                'next_url' => $users->nextPageUrl(),
+                'prev_url' => $users->previousPageUrl(),
+            ],
+            'users' => UsersResource::collection($users),
+            ];
     }
 
 
     public function getUserById($id)
     {
-        return User::findOrFail($id);
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        return [
+            'user' => new UserResource($user),
+        ];
     }
 
 
     public function createUser($request)
     {
-        $avatar = $request->file('profile_image');
+        $avatar = $request->file('photo');
         $avatarPath = $this->imageProcessingService->processAvatar($avatar, 'avatars');
 
         $user = User::create([
-            'uuid' => $request->uuid,
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'profile_image' => $avatarPath,
+            'photo' => $avatarPath,
         ]);
 
-        $token = $user->createToken($user->uuid)->plainTextToken;
+        $user->positions()->attach($request->position_id);
 
         return [
-            'user' => $user,
-            'token' => $token,
+            'user_id' => $user->id,
+            "message" => "New user successfully registered",
         ];
     }
 }

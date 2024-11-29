@@ -24,17 +24,18 @@ class FormatApiResponse
 
         if ($response->isSuccessful()) {
             $formattedResponse = [
-                'status' => true,
-                'data' => $originalContent,
+                'success' => true,
+                ...$originalContent,
             ];
         } else {
             $formattedResponse = [
-                'status' => false,
-                'error' => [
-                    'code' => $response->getStatusCode() ?? $this->defaultErrorStatus,
-                    'message' => $originalContent['message'] ?? $this->defaultErrorMessage,
-                ],
+                'success' => false,
+                'message' => $originalContent['message'] ?? $this->defaultErrorMessage,
             ];
+
+            if (isset($originalContent['fails'])) {
+                $formattedResponse['fails'] = $originalContent['fails'];
+            }
         }
 
         $response->setData($formattedResponse);

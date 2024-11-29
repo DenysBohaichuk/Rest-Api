@@ -28,11 +28,10 @@ class UserFactory extends Factory
         Storage::disk('public')->put($avatarPath, file_get_contents($avatarUrl));
 
         return [
-            'uuid' => fake()->uuid(),
             'name' => $name,
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
-            'profile_image' => $avatarPath,
+            'photo' => $avatarPath,
         ];
     }
 

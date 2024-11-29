@@ -4,18 +4,21 @@ import UserList from "@/src/components/UserList.vue";
 import AddUserForm from "@/src/components/AddUserForm.vue";
 import {createUser, fetchUsers} from "@/src/api/users.js";
 import {handleApiError} from "@/src/api/utils.js";
-import * as yup from 'yup';
+import {fetchPositions} from "@/src/api/positions.js";
+import {fetchToken} from "@/src/api/token.js";
+//import * as yup from 'yup';
 
-
+const token = ref(null);
+const positions = ref([]);
 const users = ref([]);
 const page = ref(1);
 const hasMore = ref(true);
 const form = ref({
-    uuid: '',
     name: '',
     email: '',
     phone: '',
-    profile_image: null,
+    position: '',
+    photo: null,
 });
 const formErrors = ref([]);
 
@@ -23,7 +26,7 @@ const formErrors = ref([]);
 /*const schema = yup.object().shape({
     name: yup.string().required('Ім\'я є обов\'язковим.'),
     email: yup.string().email('Некоректний формат email.').required('Email є обов\'язковим.'),
-    profile_image: yup
+    photo: yup
         .mixed()
         .required('Аватар є обов\'язковим.')
         .test('fileSize', 'Розмір файлу має бути не більше 2MB.', (value) => {
@@ -37,25 +40,24 @@ const formErrors = ref([]);
 const resetForm = () => {
     form.value.name = '';
     form.value.email = '';
-    form.value.profile_image = null;
-    document.getElementById('profile_image').value = '';
+    form.value.photo = null;
+    document.getElementById('photo').value = '';
 };
 
 const loadUsers = async () => {
     try {
         const response = await fetchUsers(page.value);
-        const data = response.data.users
 
         console.log(response)
 
-        if (response.status) {
-            users.value.push(...data.data);
-            hasMore.value = data.current_page < data.last_page;
+        if (response.success) {
+            users.value.push(...response.users);
+            hasMore.value = response.page < response.total_pages;
         } else {
-            handleApiError(response.error);
+            handleApiError(response);
         }
     } catch (err) {
-        handleApiError(err.response?.data?.error || { code: 500, message: 'Виникла несподівана помилка.' });
+        handleApiError(err.response || { code: 500, message: 'Виникла несподівана помилка.' });
     }
 };
 
@@ -64,59 +66,92 @@ const loadMore = async () => {
     await loadUsers();
 };
 
+const loadPositions = async () =>{
+    try {
+        const response = await fetchPositions();
+
+        if (response.success) {
+            positions.value.push(...response.positions);
+        } else {
+            handleApiError(response);
+        }
+    } catch (err) {
+        handleApiError(err.response || { code: 500, message: 'Виникла несподівана помилка.' });
+    }
+}
+const getToken = async () =>{
+    try {
+        const response = await fetchToken();
+
+        if (response.success) {
+            token.value = response.token
+            alert("Токен отримано")
+        } else {
+            handleApiError(response);
+        }
+    } catch (err) {
+        handleApiError(err.response || { code: 500, message: 'Виникла несподівана помилка.' });
+    }
+}
 const addUser = async () => {
     formErrors.value = [];
     try {
+
+        if (!token.value) {
+            alert("Токен не отримано!");
+            return;
+        }
+
         console.log("Додавання користувача...", form.value);
 
        // await schema.validate(form.value, { abortEarly: false });
 
         const formData = new FormData();
-        formData.append('uuid', form.value.uuid);
         formData.append('name', form.value.name);
         formData.append('email', form.value.email);
         formData.append('phone', form.value.phone);
-        formData.append('profile_image', form.value.profile_image);
+        formData.append('position_id', form.value.position);
+        formData.append('photo', form.value.photo);
 
         for (let [key, value] of formData.entries()) {
             console.log(`${key}:`, value);
         }
 
-        const response = await createUser(formData);
+        const response = await createUser(formData, token.value);
 
-        console.log("Результат API:", response);
+        console.log("Результат API:", response.data);
 
-        const data = response.data;
+        if (response.data.success) {
+            const tokenFromHeader = response.headers.get('Authorization');
+            token.value = tokenFromHeader.split(' ')[1];
 
-        if (response.status) {
-            users.value.unshift(data.user);
             resetForm();
             alert('Користувач успішно доданий!');
         } else {
-            handleApiError(response.error);
+            handleApiError(response.data);
         }
     } catch (validationError) {
         console.error("Помилка валідації:", validationError);
 
-        if (validationError.response?.data?.error?.message) {
-            formErrors.value = validationError.response.data.error.message;
+        if (validationError.response?.data?.fails) {
+            formErrors.value = validationError.response.data.fails;
         }
-        else if(validationError?.message){
+        else if(validationError?.response?.data?.message){
+            formErrors.value = [validationError.response?.data?.message];
+        } else if(validationError?.message){
             formErrors.value = [validationError.message];
-        } else if (validationError.response?.data?.message) {
-            formErrors.value = [validationError.response.data.message];
         } else {
             formErrors.value = ["Сталася невідома помилка."];
         }
     }
 };
-
 const onFileChange = (event) => {
     const file = event.target.files[0];
-    form.value.profile_image = file ? file : null;
+    form.value.photo = file ? file : null;
 };
 
 loadUsers();
+loadPositions();
 </script>
 
 <template>
@@ -130,7 +165,9 @@ loadUsers();
         <AddUserForm
             :form="form"
             :formErrors="formErrors"
+            :positions="positions"
             @submit-form="addUser"
+            @get-token="getToken"
             @file-change="onFileChange"
         />
     </div>

@@ -22,41 +22,45 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid' => 'required|string|unique:users',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'name' => 'required|string|min:2|max:60',
+            'email' => 'required|email|regex:/^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$/|unique:users',
             'phone' => [
                 'required',
                 'string',
-                'regex:/^(\+380|0)[0-9]{9}$/',
+                'regex:/^(\+380)[0-9]{9}$/',
                 'max:13',
             ],
-            'profile_image' => 'required|image',
+            'position_id' => 'required|integer|exists:positions,id',
+            'photo' => 'required|image|mimes:jpeg,jpg|dimensions:min_width=70,min_height=70|max:5120',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'uuid.required' => 'Поле ID є обов\'язковим.',
-            'uuid.string' => 'Поле ID повинно бути строкою.',
-            'uuid.unique' => 'Цей ID вже існує в системі.',
-
             'name.required' => 'Поле Ім\'я є обов\'язковим.',
             'name.string' => 'Поле Ім\'я повинно бути строкою.',
-            'name.max' => 'Поле Ім\'я не може перевищувати 255 символів.',
+            'name.min' => 'Поле "Ім\'я" повинно містити не менше 2 символів.',
+            'name.max' => 'Поле "Ім\'я" не може перевищувати 60 символів.',
 
             'email.required' => 'Поле Email є обов\'язковим.',
             'email.email' => 'Поле Email повинно містити дійсну адресу електронної пошти.',
+            'email.regex' => 'Поле "Email" повинно відповідати стандарту RFC2822.',
             'email.unique' => 'Цей Email вже існує в системі.',
 
             'phone.required' => 'Поле Телефон є обов\'язковим.',
             'phone.string' => 'Поле Телефон повинно бути строкою.',
-            'phone.regex' => 'Телефон повинен починатися з +380 або 0 та містити 9 цифр.',
+            'phone.regex' => 'Телефон повинен починатися з +380',
             'phone.max' => 'Телефон не може перевищувати 13 символів у форматі +380.',
 
-            'profile_image.required' => 'Поле Аватар профілю є обов\'язковим.',
-            'profile_image.image' => 'Поле Аватар профілю повинно містити зображення.',
+            'position_id.required' => 'Поле "Посада" є обов\'язковим.',
+            'position_id.exists' => 'Вказана посада не існує в системі.',
+
+            'photo.required' => 'Поле "Фото" є обов\'язковим.',
+            'photo.image' => 'Поле "Фото" повинно бути зображенням.',
+            'photo.mimes' => 'Фото повинно бути формату JPEG або JPG.',
+            'photo.dimensions' => 'Фото повинно мати мінімальні розміри 70x70 пікселів.',
+            'photo.max' => 'Розмір фото не може перевищувати 5 МБ.',
         ];
     }
 

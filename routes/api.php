@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::name('api.')->group(function () {
+Route::name('api.')->prefix('v1')->group(function () {
+    Route::get('/positions', PositionController::class);
+
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::post('/users', [UserController::class, 'store']);
+
+    Route::middleware('custom_auth_jwt_api')->group(function () {
+        Route::post('/users', [UserController::class, 'store']);
+    });
+
+    Route::get('/token', [AuthController::class, 'getToken']);
 });
